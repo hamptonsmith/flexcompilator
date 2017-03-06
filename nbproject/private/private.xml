@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/Matcher.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/Utils.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/ParseHead.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MSequence.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MCapture.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/CAny.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MError.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/CSubtract.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/NoMatchException.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/COneOf.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MLiteral.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/fiddle/Sbsdl.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/WellFormednessException.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MAlternatives.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MEndOfInput.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MZeroOrMore.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/AbstractCharacterMatcher.java</file>
+        </group>
+    </open-files>
+</project-private>
