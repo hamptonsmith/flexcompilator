@@ -4,11 +4,11 @@ import com.shieldsbetter.flexcompilator.NoMatchException;
 import com.shieldsbetter.flexcompilator.ParseHead;
 import com.shieldsbetter.flexcompilator.WellFormednessException;
 
-public class MError implements Matcher {
+public class MForbid implements Matcher {
     private final Matcher myMatcher;
     private final String myMessage;
     
-    public MError(Matcher matcher, String msg) {
+    public MForbid(Matcher matcher, String msg) {
         myMatcher = matcher;
         myMessage = msg;
     }

@@ -121,12 +121,16 @@ public class ParseHead {
         int characterCt;
         mySavedOffset.push(myOffset);
         
+        int captureDepth = myCaptures.size();
         try {
             characterCt = m.match(this);
             mySavedOffset.pop();  // Throw it away.
         }
         catch (NoMatchException nme) {
             myOffset = mySavedOffset.pop();  // Restore.
+            while (myCaptures.size() > captureDepth) {
+                myCaptures.pollLast();
+            }
             throw NoMatchException.INSTANCE;
         }
         

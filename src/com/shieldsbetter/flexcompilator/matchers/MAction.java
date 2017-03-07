@@ -4,29 +4,31 @@ import com.shieldsbetter.flexcompilator.NoMatchException;
 import com.shieldsbetter.flexcompilator.ParseHead;
 import com.shieldsbetter.flexcompilator.WellFormednessException;
 
-public class MCapture implements Matcher {
+public abstract class MAction implements Matcher {
     private final Matcher myBase;
     
-    public MCapture(Matcher ... ms) {
-        myBase = new MSequence(ms);
+    public MAction(Matcher base) {
+        myBase = base;
     }
     
-    public MCapture(Matcher m) {
-        myBase = m;
-    }
-
+    public void before(ParseHead h) {}
+    public void onMatched(ParseHead h) {}
+    public void onFailed(ParseHead h) {}
+    
     @Override
     public int match(ParseHead h)
             throws NoMatchException, WellFormednessException {
-        int length;
+        before(h);
+        
         try {
-            length = h.advanceOver(myBase);
-            h.captureString(length);
+            int result = h.advanceOver(myBase);
+            onMatched(h);
         }
         catch (NoMatchException nme) {
+            onFailed(h);
             throw nme;
         }
         
-        return length;
+        return result;
     }
 }
