@@ -5,15 +5,6 @@ import com.shieldsbetter.flexcompilator.ParseHead;
 import com.shieldsbetter.flexcompilator.WellFormednessException;
 
 public abstract class AbstractCharacterMatcher implements Matcher {
-    private final String myName;
-    
-    public AbstractCharacterMatcher(String s) {
-        myName = s;
-    }
-    
-    public String getName() {
-        return myName;
-    }
     
     public abstract boolean matchCharacter(int i);
     
@@ -21,7 +12,6 @@ public abstract class AbstractCharacterMatcher implements Matcher {
     public int match(ParseHead h)
             throws NoMatchException, WellFormednessException {
         
-        System.out.println(myName);
         boolean charMatch = matchCharacter(h.peekChar());
         
         if (charMatch) {

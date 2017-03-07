@@ -51,20 +51,9 @@ public class ParseHead {
         return myOffset < myCodepoints.length;
     }
     
-    public void pushOffset() {
-        mySavedOffset.push(myOffset);
-    }
-    
-    public void popOffset() {
-        myOffset = mySavedOffset.pop();
-    }
-    
-    public void tossOffset() {
-        mySavedOffset.pop();
-    }
-    
     public void captureString(int length) {
-        myCaptures.add(new String(myCodepoints, mySavedOffset.peek(), length));
+        myCaptures.add(new String(
+                myCodepoints, mySavedOffset.peek() - length, length));
     }
     
     public String nextCapture() {
@@ -85,15 +74,23 @@ public class ParseHead {
         myOffset += count;
     }
     
-    public void skip(Matcher m) throws WellFormednessException {
+    public int skip(Matcher m) throws WellFormednessException {
+        int characterCt;
+        
         try {
             if (m != null) {
-                advanceOverNoSkip(m);
+                characterCt = advanceOverNoSkip(m);
+            }
+            else {
+                characterCt = 0;
             }
         }
         catch (NoMatchException nme) {
             // No problem.
+            characterCt = 0;
         }
+        
+        return characterCt;
     }
     
     public void advanceOver(int[] literal)
@@ -114,30 +111,37 @@ public class ParseHead {
         }
     }
     
-    public void advanceOver(Matcher m)
+    public int advanceOver(Matcher m)
             throws NoMatchException, WellFormednessException {
-        doSkip();
-        advanceOverNoSkip(m);
+        return doSkip() + advanceOverNoSkip(m);
     }
     
-    private void advanceOverNoSkip(Matcher m)
+    private int advanceOverNoSkip(Matcher m)
             throws NoMatchException, WellFormednessException {
+        int characterCt;
         mySavedOffset.push(myOffset);
         
         try {
-            m.match(this);
+            characterCt = m.match(this);
             mySavedOffset.pop();  // Throw it away.
         }
         catch (NoMatchException nme) {
             myOffset = mySavedOffset.pop();  // Restore.
             throw NoMatchException.INSTANCE;
         }
+        
+        return characterCt;
     }
     
-    private void doSkip() throws WellFormednessException {
+    private int doSkip() throws WellFormednessException {
+        int characterCt;
         if (mySkipper != null) {
-            skip(mySkipper);
+            characterCt = skip(mySkipper);
         }
+        else {
+            characterCt = 0;
+        }
+        return characterCt;
     }
     
     private void advanceOver(int character) throws NoMatchException {

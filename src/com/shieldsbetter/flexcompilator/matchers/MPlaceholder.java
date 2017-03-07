@@ -22,6 +22,6 @@ public class MPlaceholder implements Matcher {
             throw new IllegalStateException("Placeholder not filled in.");
         }
         
-        return myBase.match(h);
+        return h.advanceOver(myBase);
     }
 }

@@ -22,14 +22,11 @@ public class MAlternatives implements Matcher {
         while (length == -1 && alternativeIter.hasNext()) {
             Matcher alternative = alternativeIter.next();
             
-            h.pushOffset();
             try {
-                length = alternative.match(h);
-                h.tossOffset();
+                length = h.advanceOver(alternative);
             }
             catch (NoMatchException nme) {
                 // No problem.
-                h.popOffset();
             }
         }
         

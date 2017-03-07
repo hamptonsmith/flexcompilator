@@ -16,7 +16,7 @@ public class MError implements Matcher {
     @Override
     public int match(ParseHead h)
             throws NoMatchException, WellFormednessException {
-        myMatcher.match(h);
+        h.advanceOver(myMatcher);
         throw new WellFormednessException(myMessage);
     }
 }

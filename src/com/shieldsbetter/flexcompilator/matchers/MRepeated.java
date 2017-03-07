@@ -32,7 +32,7 @@ public class MRepeated implements Matcher {
         int justNow;
         do {
             try {
-                justNow = myBase.match(h);
+                justNow = h.advanceOver(myBase);
                 result += justNow;
                 instances++;
             }

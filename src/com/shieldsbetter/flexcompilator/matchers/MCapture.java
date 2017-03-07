@@ -14,17 +14,12 @@ public class MCapture implements Matcher {
     @Override
     public int match(ParseHead h)
             throws NoMatchException, WellFormednessException {
-        h.pushOffset();
-        
         int length;
         try {
-            length = myBase.match(h);
+            length = h.advanceOver(myBase);
             h.captureString(length);
-            
-            h.tossOffset();
         }
         catch (NoMatchException nme) {
-            h.popOffset();
             throw nme;
         }
         
