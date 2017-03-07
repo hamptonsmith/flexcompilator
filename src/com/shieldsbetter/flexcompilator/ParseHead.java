@@ -8,9 +8,12 @@ public class ParseHead {
     private final int[] myCodepoints;
     
     private final Deque<Integer> mySavedOffset = new ArrayDeque<>();
+    
     private int myOffset;
     
     private final Deque<String> myCaptures = new ArrayDeque<>();
+    
+    private Matcher mySkipper = null;
     
     public ParseHead(String input) {
         int inputLength = input.length();
@@ -29,7 +32,22 @@ public class ParseHead {
         System.arraycopy(protoCodepoints, 0, myCodepoints, 0, codepointCt);
     }
     
-    public boolean hasNextChar() {
+    public String remainingText() {
+        return new String(
+                myCodepoints, myOffset, myCodepoints.length - myOffset);
+    }
+    
+    public void setSkip(Matcher skipper) {
+        mySkipper = skipper;
+    }
+    
+    public Matcher getSkip() {
+        return mySkipper;
+    }
+    
+    public boolean hasNextChar() throws WellFormednessException {
+        doSkip();
+        
         return myOffset < myCodepoints.length;
     }
     
@@ -53,7 +71,9 @@ public class ParseHead {
         return myCaptures.remove();
     }
     
-    public int peekChar() throws NoMatchException {
+    public int peekChar() throws NoMatchException, WellFormednessException {
+        doSkip();
+        
         if (myOffset == myCodepoints.length) {
             throw NoMatchException.INSTANCE;
         }
@@ -65,19 +85,21 @@ public class ParseHead {
         myOffset += count;
     }
     
-    public void advanceOver(int character) throws NoMatchException {
-        if (myOffset == myCodepoints.length) {
-            throw NoMatchException.INSTANCE;
+    public void skip(Matcher m) throws WellFormednessException {
+        try {
+            if (m != null) {
+                advanceOverNoSkip(m);
+            }
         }
-        
-        if (myCodepoints[myOffset] != character) {
-            throw NoMatchException.INSTANCE;
+        catch (NoMatchException nme) {
+            // No problem.
         }
-        
-        myOffset++;
     }
     
-    public void advanceOver(int[] literal) throws NoMatchException {
+    public void advanceOver(int[] literal)
+            throws NoMatchException, WellFormednessException {
+        doSkip();
+        
         mySavedOffset.push(myOffset);
         
         try {
@@ -94,15 +116,39 @@ public class ParseHead {
     
     public void advanceOver(Matcher m)
             throws NoMatchException, WellFormednessException {
+        doSkip();
+        advanceOverNoSkip(m);
+    }
+    
+    private void advanceOverNoSkip(Matcher m)
+            throws NoMatchException, WellFormednessException {
         mySavedOffset.push(myOffset);
         
         try {
-            myOffset += m.match(this);
+            m.match(this);
             mySavedOffset.pop();  // Throw it away.
         }
         catch (NoMatchException nme) {
             myOffset = mySavedOffset.pop();  // Restore.
             throw NoMatchException.INSTANCE;
         }
+    }
+    
+    private void doSkip() throws WellFormednessException {
+        if (mySkipper != null) {
+            skip(mySkipper);
+        }
+    }
+    
+    private void advanceOver(int character) throws NoMatchException {
+        if (myOffset == myCodepoints.length) {
+            throw NoMatchException.INSTANCE;
+        }
+        
+        if (myCodepoints[myOffset] != character) {
+            throw NoMatchException.INSTANCE;
+        }
+        
+        myOffset++;
     }
 }

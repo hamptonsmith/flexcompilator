@@ -21,11 +21,15 @@ public class MAlternatives implements Matcher {
         Iterator<Matcher> alternativeIter = myAlternatives.iterator();
         while (length == -1 && alternativeIter.hasNext()) {
             Matcher alternative = alternativeIter.next();
+            
+            h.pushOffset();
             try {
                 length = alternative.match(h);
+                h.tossOffset();
             }
             catch (NoMatchException nme) {
                 // No problem.
+                h.popOffset();
             }
         }
         

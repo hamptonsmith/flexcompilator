@@ -6,6 +6,7 @@ public class CSubtract extends AbstractCharacterMatcher {
     
     public CSubtract(
             AbstractCharacterMatcher in, AbstractCharacterMatcher butNotIn) {
+        super("Subtract " + in.getName() + " - " + butNotIn.getName());
         myIn = in;
         myButNotIn = butNotIn;
     }

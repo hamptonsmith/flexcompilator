@@ -20,12 +20,15 @@ public class MOptional implements Matcher {
             throws NoMatchException, WellFormednessException {
         int characters;
         
+        h.pushOffset();
         try {
             characters = myBase.match(h);
+            h.tossOffset();
         }
         catch (NoMatchException nme) {
             // No problem.
             characters = 0;
+            h.popOffset();
         }
         
         return characters;
