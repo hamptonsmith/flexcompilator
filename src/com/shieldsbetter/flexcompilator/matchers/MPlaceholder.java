@@ -7,6 +7,10 @@ import com.shieldsbetter.flexcompilator.WellFormednessException;
 public class MPlaceholder implements Matcher {
     private Matcher myBase;
     
+    public void fillIn(Matcher ... ms) {
+        fillIn(new MSequence(ms));
+    }
+    
     public void fillIn(Matcher m) {
         if (myBase != null) {
             throw new IllegalStateException("Already filled in.");

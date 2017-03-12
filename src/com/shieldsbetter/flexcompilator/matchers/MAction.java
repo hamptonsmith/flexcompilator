@@ -12,7 +12,7 @@ public abstract class MAction implements Matcher {
     }
     
     public void before(ParseHead h) {}
-    public void onMatched(ParseHead h) {}
+    public void onMatched(ParseHead h) throws WellFormednessException {}
     public void onFailed(ParseHead h) {}
     
     @Override
@@ -20,8 +20,9 @@ public abstract class MAction implements Matcher {
             throws NoMatchException, WellFormednessException {
         before(h);
         
+        int result;
         try {
-            int result = h.advanceOver(myBase);
+            result = h.advanceOver(myBase);
             onMatched(h);
         }
         catch (NoMatchException nme) {

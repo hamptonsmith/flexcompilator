@@ -5,20 +5,24 @@
         <group>
             <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/Matcher.java</file>
             <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/Utils.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/CSet.java</file>
             <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/ParseHead.java</file>
             <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MSequence.java</file>
             <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MCapture.java</file>
-            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/CAny.java</file>
-            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MError.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MOptional.java</file>
             <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/CSubtract.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MForbid.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MAction.java</file>
             <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/NoMatchException.java</file>
             <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/COneOf.java</file>
             <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MLiteral.java</file>
-            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/fiddle/Sbsdl.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MPlaceholder.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MRequire.java</file>
             <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/WellFormednessException.java</file>
             <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MAlternatives.java</file>
             <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MEndOfInput.java</file>
-            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MZeroOrMore.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MWithSkipper.java</file>
+            <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/MRepeated.java</file>
             <file>file:/home/hamptos/NetBeansProjects/flexcompilator/src/com/shieldsbetter/flexcompilator/matchers/AbstractCharacterMatcher.java</file>
         </group>
     </open-files>
