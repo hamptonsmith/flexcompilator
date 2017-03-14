@@ -10,6 +10,7 @@ public abstract class MDo implements Matcher {
     @Override
     public int match(ParseHead h)
             throws NoMatchException, WellFormednessException {
+        run();
         return 0;
     }
 }

@@ -52,8 +52,7 @@ public class ParseHead {
     }
     
     public void captureString(int length) {
-        myCaptures.add(new String(
-                myCodepoints, mySavedOffset.peek() - length, length));
+        myCaptures.add(new String(myCodepoints, mySavedOffset.peek(), length));
     }
     
     public String nextCapture() {
