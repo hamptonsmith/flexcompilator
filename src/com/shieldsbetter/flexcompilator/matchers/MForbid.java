@@ -16,7 +16,24 @@ public class MForbid implements Matcher {
     @Override
     public int match(ParseHead h)
             throws NoMatchException, WellFormednessException {
-        h.advanceOver(myMatcher);
-        throw new WellFormednessException(myMessage);
+        // Make sure we're queued up to the thing we're potentially about to
+        // forbid so that we can throw a sensible exception.
+        h.skip();
+        
+        h.pushState();
+        
+        try {
+            h.require(myMatcher);
+        }
+        finally {
+            // If we just matched, we want to get back to the state just before
+            // the match so we can throw a sensible exception.  If we didn't
+            // just match, let's get back into the state we entered in so the
+            // parser can carry on.  Either way we do the same thing.
+            h.tossState();
+        }
+        
+        // No exception above.  We matched.  This is forbidden.
+        throw new WellFormednessException(myMessage, h);
     }
 }

@@ -11,16 +11,7 @@ public abstract class AbstractCharacterMatcher implements Matcher {
     @Override
     public int match(ParseHead h)
             throws NoMatchException, WellFormednessException {
-        
-        boolean charMatch = matchCharacter(h.peekChar());
-        
-        if (charMatch) {
-            h.skip(1);
-        }
-        else {
-            throw NoMatchException.INSTANCE;
-        }
-        
+        h.requireChar(this);
         return 1;
     }
 }

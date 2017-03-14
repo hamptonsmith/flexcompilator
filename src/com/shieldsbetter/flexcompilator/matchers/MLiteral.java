@@ -15,7 +15,7 @@ public class MLiteral implements Matcher {
     @Override
     public int match(ParseHead h)
             throws NoMatchException, WellFormednessException {
-        h.advanceOver(myLiteral);
+        h.require(myLiteral);
         return myLiteral.length;
     }
 }

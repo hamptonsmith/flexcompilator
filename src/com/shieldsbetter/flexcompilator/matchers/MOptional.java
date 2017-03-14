@@ -21,7 +21,7 @@ public class MOptional implements Matcher {
         int characters;
         
         try {
-            characters = h.advanceOver(myBase);
+            characters = h.require(myBase);
         }
         catch (NoMatchException nme) {
             // No problem.

@@ -1,21 +1,23 @@
 package com.shieldsbetter.flexcompilator;
 
+import com.shieldsbetter.flexcompilator.matchers.AbstractCharacterMatcher;
 import com.shieldsbetter.flexcompilator.matchers.Matcher;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 public class ParseHead {
     private final int[] myCodepoints;
-    
-    private final Deque<Integer> mySavedOffset = new ArrayDeque<>();
-    
-    private int myOffset;
-    
-    private final Deque<String> myCaptures = new ArrayDeque<>();
-    
-    private Matcher mySkipper = null;
+    private final ArrayDeque<State> myStates = new ArrayDeque<>();
     
     public ParseHead(String input) {
+        this(input, 1, 0);
+    }
+    
+    public ParseHead(String input, int lineStart, int colStart) {
+        myStates.push(new State(lineStart, colStart));
+        
         int inputLength = input.length();
         int[] protoCodepoints = new int[inputLength];
         
@@ -32,45 +34,78 @@ public class ParseHead {
         System.arraycopy(protoCodepoints, 0, myCodepoints, 0, codepointCt);
     }
     
+    public void skip() throws WellFormednessException {
+        doSkip();
+    }
+    
+    public void pushState() {
+        myStates.push(new State(myStates.peek()));
+    }
+    
+    public void tossState() {
+        myStates.pop();
+    }
+    
+    public void acceptState() {
+        State toAccept = myStates.pop();
+        myStates.peek().absorb(toAccept);
+    }
+    
+    public String getLine() {
+        return myStates.peek().getLine();
+    }
+    
+    public int getLineNumber() {
+        return myStates.peek().getLineNumber();
+    }
+    
+    public int getColumn() {
+        return myStates.peek().getColumn();
+    }
+    
+    public String getAlignmentPrefix() {
+        return myStates.peek().getAlignmentPrefix();
+    }
+    
     public String remainingText() {
-        return new String(
-                myCodepoints, myOffset, myCodepoints.length - myOffset);
+        int offset = myStates.peek().getOffset();
+        return new String(myCodepoints, offset, myCodepoints.length - offset);
     }
     
     public void setSkip(Matcher skipper) {
-        mySkipper = skipper;
+        myStates.peek().setSkipper(skipper);
     }
     
     public Matcher getSkip() {
-        return mySkipper;
+        return myStates.peek().getSkipper();
     }
     
     public boolean hasNextChar() throws WellFormednessException {
         doSkip();
         
-        return myOffset < myCodepoints.length;
+        return myStates.peek().getOffset() < myCodepoints.length;
     }
     
     public void captureString(int length) {
-        myCaptures.add(new String(myCodepoints, mySavedOffset.peek(), length));
+        myStates.peek().captureString(length);
     }
     
-    public String nextCapture() {
-        return myCaptures.remove();
-    }
-    
-    public int peekChar() throws NoMatchException, WellFormednessException {
-        doSkip();
-        
-        if (myOffset == myCodepoints.length) {
-            throw NoMatchException.INSTANCE;
+    public String popCapture() {
+        String result;
+        try {
+            result = myStates.peek().popCapture();
+        }
+        catch (NoSuchElementException nsee) {
+            if (myStates.size() > 1) {
+                throw new IllegalStateException(
+                        "Capture pop past most recent backtrack point.");
+            }
+            else {
+                throw new IllegalStateException("No available captures.");
+            }
         }
         
-        return myCodepoints[myOffset];
-    }
-    
-    public void skip(int count) {
-        myOffset += count;
+        return result;
     }
     
     public int skip(Matcher m) throws WellFormednessException {
@@ -78,7 +113,7 @@ public class ParseHead {
         
         try {
             if (m != null) {
-                characterCt = advanceOverNoSkip(m);
+                characterCt = requireNoSkip(m);
             }
             else {
                 characterCt = 0;
@@ -92,44 +127,39 @@ public class ParseHead {
         return characterCt;
     }
     
-    public void advanceOver(int[] literal)
+    public void require(int[] literal)
             throws NoMatchException, WellFormednessException {
         doSkip();
         
-        mySavedOffset.push(myOffset);
+        pushState();
         
         try {
-            for (int c : literal) {
-                advanceOver(c);
-            }
-            mySavedOffset.pop();
+            myStates.peek().advanceOver(literal);
+            
+            acceptState();
         }
         catch (NoMatchException nme) {
-            myOffset = mySavedOffset.pop();
+            tossState();
             throw nme;
         }
     }
     
-    public int advanceOver(Matcher m)
+    public int require(Matcher m)
             throws NoMatchException, WellFormednessException {
-        return doSkip() + advanceOverNoSkip(m);
+        return doSkip() + requireNoSkip(m);
     }
     
-    private int advanceOverNoSkip(Matcher m)
+    private int requireNoSkip(Matcher m)
             throws NoMatchException, WellFormednessException {
         int characterCt;
-        mySavedOffset.push(myOffset);
+        pushState();
         
-        int captureDepth = myCaptures.size();
         try {
             characterCt = m.match(this);
-            mySavedOffset.pop();  // Throw it away.
+            acceptState();
         }
         catch (NoMatchException nme) {
-            myOffset = mySavedOffset.pop();  // Restore.
-            while (myCaptures.size() > captureDepth) {
-                myCaptures.pollLast();
-            }
+            tossState();
             throw NoMatchException.INSTANCE;
         }
         
@@ -138,8 +168,8 @@ public class ParseHead {
     
     private int doSkip() throws WellFormednessException {
         int characterCt;
-        if (mySkipper != null) {
-            characterCt = skip(mySkipper);
+        if (myStates.peek().getSkipper() != null) {
+            characterCt = skip(myStates.peek().getSkipper());
         }
         else {
             characterCt = 0;
@@ -147,15 +177,163 @@ public class ParseHead {
         return characterCt;
     }
     
-    private void advanceOver(int character) throws NoMatchException {
-        if (myOffset == myCodepoints.length) {
-            throw NoMatchException.INSTANCE;
+    public void requireChar(AbstractCharacterMatcher m)
+            throws NoMatchException, WellFormednessException {
+        myStates.peek().requireChar(m);
+    }
+    
+    private class State {
+        private int myOffset;
+        private final Deque<String> myCaptures = new LinkedList<>();
+        private Matcher mySkipper;
+        private int myLineNumber;
+        private int myCol;
+        private int myLineStart;
+        private final StringBuilder myAlignmentPrefix = new StringBuilder();
+        
+        public State(int lineNumber, int col) {
+            myLineNumber = lineNumber;
+            myCol = col;
         }
         
-        if (myCodepoints[myOffset] != character) {
-            throw NoMatchException.INSTANCE;
+        public State(State original) {
+            myOffset = original.myOffset;
+            mySkipper = original.mySkipper;
+            myLineNumber = original.myLineNumber;
+            myCol = original.myCol;
+            myLineStart = original.myLineStart;
+            myAlignmentPrefix.append(original.myAlignmentPrefix);
         }
         
-        myOffset++;
+        public void captureString(int length) {
+            myCaptures.push(
+                    new String(myCodepoints, myOffset - length, length));
+        }
+        
+        public String popCapture() {
+            return myCaptures.pop();
+        }
+        
+        public int getOffset() {
+            return myOffset;
+        }
+        
+        public int getLineNumber() {
+            return myLineNumber;
+        }
+        
+        public int getColumn() {
+            return myCol;
+        }
+        
+        public String getAlignmentPrefix() {
+            return myAlignmentPrefix.toString();
+        }
+        
+        public String getLine() {
+            int offset = myLineStart;
+            while (offset < myCodepoints.length
+                    && myCodepoints[offset] != '\n') {
+                offset++;
+            }
+
+            return new String(myCodepoints, myLineStart, offset - myLineStart);
+        }
+        
+        public Matcher getSkipper() {
+            return mySkipper;
+        }
+        
+        public void setSkipper(Matcher m) {
+            mySkipper = m;
+        }
+        
+        public void absorb(State other) {
+            myOffset = other.myOffset;
+            mySkipper = other.mySkipper;
+            myLineNumber = other.myLineNumber;
+            myCol = other.myCol;
+            myLineStart = other.myLineStart;
+            
+            myAlignmentPrefix.delete(0, myAlignmentPrefix.length());
+            myAlignmentPrefix.append(other.myAlignmentPrefix);
+            
+            ArrayDeque<String> flipper =
+                    new ArrayDeque<>(other.myCaptures.size());
+            while (!other.myCaptures.isEmpty()) {
+                flipper.push(other.myCaptures.pop());
+            }
+            
+            while (!flipper.isEmpty()) {
+                myCaptures.push(flipper.pop());
+            }
+        }
+        
+        public int peekChar() throws NoMatchException, WellFormednessException {
+            doSkip();
+
+            if (myOffset == myCodepoints.length) {
+                throw NoMatchException.INSTANCE;
+            }
+
+            return myCodepoints[myOffset];
+        }
+        
+        public void require(int character) throws NoMatchException {
+            if (myOffset == myCodepoints.length) {
+                throw NoMatchException.INSTANCE;
+            }
+
+            if (myCodepoints[myOffset] != character) {
+                throw NoMatchException.INSTANCE;
+            }
+
+            advanceChar();
+        }
+        
+        public void advanceOver(int[] characters) throws NoMatchException {
+            for (int c : characters) {
+                require(c);
+            }
+        } 
+        
+        public void requireChar(AbstractCharacterMatcher m)
+                throws NoMatchException, WellFormednessException {
+            boolean matches = m.matchCharacter(peekChar());
+            if (matches) {
+                skip(1);
+            }
+            else {
+                throw NoMatchException.INSTANCE;
+            }
+        }
+        
+        public void skip(int count) {
+            for (int i = 0; i < count; i++) {
+                advanceChar();
+            }
+        }
+        
+        private void advanceChar() {
+            int c = myCodepoints[myOffset];
+            if (c == '\n') {
+                myLineNumber++;
+                myCol = 0;
+                myLineStart = myOffset + 1;
+                myAlignmentPrefix.delete(0, myAlignmentPrefix.length());
+            }
+            else {
+                if (c == '\t') {
+                    myAlignmentPrefix.append("\t");
+                }
+                else {
+                    myAlignmentPrefix.append(" ");
+                }
+
+                myCol++;
+            }
+
+            myOffset++;
+        }
     }
 }

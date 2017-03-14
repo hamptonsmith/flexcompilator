@@ -18,11 +18,15 @@ public class MRequire implements Matcher {
             throws NoMatchException, WellFormednessException {
         int result;
         
+        // Let's get queued up right to the thing we're about to require so that
+        // we can have a sensible exception.
+        h.skip();
+        
         try {
-            result = h.advanceOver(myBase);
+            result = h.require(myBase);
         }
         catch (NoMatchException nme) {
-            throw new WellFormednessException(myMessage);
+            throw new WellFormednessException(myMessage, h);
         }
         
         return result;

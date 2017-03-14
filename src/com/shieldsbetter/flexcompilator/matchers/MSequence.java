@@ -18,7 +18,7 @@ public class MSequence implements Matcher {
             throws NoMatchException, WellFormednessException {
         int soFar = 0;
         for (Matcher m : mySubmatchers) {
-            soFar += h.advanceOver(m);
+            soFar += h.require(m);
         }
         
         return soFar;

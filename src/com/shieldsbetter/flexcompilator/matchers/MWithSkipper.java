@@ -23,7 +23,7 @@ public class MWithSkipper implements Matcher{
         
         int charCt;
         try {
-            charCt = h.advanceOver(myBase);
+            charCt = h.require(myBase);
         }
         finally {
             h.setSkip(oldSkipper);

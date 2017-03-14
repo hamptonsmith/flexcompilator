@@ -22,7 +22,7 @@ public abstract class MAction implements Matcher {
         
         int result;
         try {
-            result = h.advanceOver(myBase);
+            result = h.require(myBase);
             onMatched(h);
         }
         catch (NoMatchException nme) {

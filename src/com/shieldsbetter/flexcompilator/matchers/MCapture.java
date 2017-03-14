@@ -20,7 +20,7 @@ public class MCapture implements Matcher {
             throws NoMatchException, WellFormednessException {
         int length;
         try {
-            length = h.advanceOver(myBase);
+            length = h.require(myBase);
             h.captureString(length);
         }
         catch (NoMatchException nme) {

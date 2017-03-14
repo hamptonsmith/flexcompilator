@@ -23,7 +23,7 @@ public class MAlternatives implements Matcher {
             Matcher alternative = alternativeIter.next();
             
             try {
-                length = h.advanceOver(alternative);
+                length = h.require(alternative);
             }
             catch (NoMatchException nme) {
                 // No problem.
