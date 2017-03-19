@@ -4,6 +4,7 @@ import com.shieldsbetter.flexcompilator.matchers.AbstractCharacterMatcher;
 import com.shieldsbetter.flexcompilator.matchers.Matcher;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
@@ -32,6 +33,69 @@ public class ParseHead {
         
         myCodepoints = new int[codepointCt];
         System.arraycopy(protoCodepoints, 0, myCodepoints, 0, codepointCt);
+    }
+    
+    public void pushOnParseStack(Object o) {
+        if (o.equals("from")) {
+            throw new RuntimeException();
+        }
+        
+        myStates.peek().pushOnParseStack(o);
+    }
+    
+    public Object popFromParseStack() {
+        Object result = null;
+        
+        boolean found = false;
+        Iterator<State> stateIter = myStates.iterator();
+        while (!found && stateIter.hasNext()) {
+            State state = stateIter.next();
+            
+            if (!state.isParseStackEmpty()) {
+                result = state.popFromParseStack();
+                found = true;
+            }
+        }
+        
+        return result;
+    }
+    
+    public Object peekFromParseStack() {
+        Object result = null;
+        
+        boolean found = false;
+        Iterator<State> stateIter = myStates.iterator();
+        while (!found && stateIter.hasNext()) {
+            State state = stateIter.next();
+            
+            if (!state.isParseStackEmpty()) {
+                result = state.peekFromParseStack();
+                found = true;
+            }
+        }
+        
+        return result;
+    }
+    
+    public boolean isParseStackEmpty() {
+        boolean result = true;
+        
+        Iterator<State> stateIter = myStates.iterator();
+        while (result && stateIter.hasNext()) {
+            result = stateIter.next().isParseStackEmpty();
+        }
+        
+        return result;
+    }
+    
+    public Deque<Object> getParseStackCopy() {
+        LinkedList<Object> result = new LinkedList<>();
+        
+        for (State s : myStates) {
+            result.addAll(s.myParseStack);
+        }
+        
+        return result;
     }
     
     public void skip() throws WellFormednessException {
@@ -185,6 +249,7 @@ public class ParseHead {
     private class State {
         private int myOffset;
         private final Deque<String> myCaptures = new LinkedList<>();
+        private final Deque<Object> myParseStack = new LinkedList<>();
         private Matcher mySkipper;
         private int myLineNumber;
         private int myCol;
@@ -203,6 +268,22 @@ public class ParseHead {
             myCol = original.myCol;
             myLineStart = original.myLineStart;
             myAlignmentPrefix.append(original.myAlignmentPrefix);
+        }
+        
+        public boolean isParseStackEmpty() {
+            return myParseStack.isEmpty();
+        }
+        
+        public void pushOnParseStack(Object o) {
+            myParseStack.push(o);
+        }
+        
+        public Object popFromParseStack() {
+            return myParseStack.pop();
+        }
+        
+        public Object peekFromParseStack() {
+            return myParseStack.peek();
         }
         
         public void captureString(int length) {
@@ -258,14 +339,12 @@ public class ParseHead {
             myAlignmentPrefix.delete(0, myAlignmentPrefix.length());
             myAlignmentPrefix.append(other.myAlignmentPrefix);
             
-            ArrayDeque<String> flipper =
-                    new ArrayDeque<>(other.myCaptures.size());
             while (!other.myCaptures.isEmpty()) {
-                flipper.push(other.myCaptures.pop());
+                myCaptures.push(other.myCaptures.removeLast());
             }
             
-            while (!flipper.isEmpty()) {
-                myCaptures.push(flipper.pop());
+            while (!other.myParseStack.isEmpty()) {
+                myParseStack.push(other.myParseStack.removeLast());
             }
         }
         

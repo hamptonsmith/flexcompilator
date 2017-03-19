@@ -15,6 +15,8 @@ public class MOptional implements Matcher {
         myBase = m;
     }
     
+    public void onOmitted(ParseHead h) { }
+    
     @Override
     public int match(ParseHead h)
             throws NoMatchException, WellFormednessException {
@@ -25,6 +27,7 @@ public class MOptional implements Matcher {
         }
         catch (NoMatchException nme) {
             // No problem.
+            onOmitted(h);
             characters = 0;
         }
         

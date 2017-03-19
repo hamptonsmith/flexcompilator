@@ -18,4 +18,9 @@ public class MLiteral implements Matcher {
         h.require(myLiteral);
         return myLiteral.length;
     }
+    
+    @Override
+    public String toString() {
+        return new String(myLiteral, 0, myLiteral.length);
+    }
 }
