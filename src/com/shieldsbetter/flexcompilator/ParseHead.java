@@ -213,6 +213,10 @@ public class ParseHead {
         return doSkip() + requireNoSkip(m);
     }
     
+    public Position getPosition() {
+        return new Position(myStates.peek());
+    }
+    
     private int requireNoSkip(Matcher m)
             throws NoMatchException, WellFormednessException {
         int characterCt;
@@ -244,6 +248,42 @@ public class ParseHead {
     public void requireChar(AbstractCharacterMatcher m)
             throws NoMatchException, WellFormednessException {
         myStates.peek().requireChar(m);
+    }
+    
+    public static final class Position {
+        private final int myLineNumber;
+        private final int myColumn;
+        private final String myLineContents;
+        private final String myAlignmentPrefix;
+        
+        private Position(State state) {
+            this(state.getLineNumber(), state.getColumn(), state.getLine(),
+                    state.getAlignmentPrefix());
+        }
+        
+        private Position(int lineNumber, int column, String lineContents,
+                String alignmentPrefix) {
+            myLineNumber = lineNumber;
+            myColumn = column;
+            myLineContents = lineContents;
+            myAlignmentPrefix = alignmentPrefix;
+        }
+        
+        public int getLineNumber() {
+            return myLineNumber;
+        }
+        
+        public int getColumn() {
+            return myColumn;
+        }
+        
+        public String getLineContents() {
+            return myLineContents;
+        }
+        
+        public String getAlignmentPrefix() {
+            return myAlignmentPrefix;
+        }
     }
     
     private class State {

@@ -24,6 +24,10 @@ public class MForbid implements Matcher {
         
         try {
             h.require(myMatcher);
+            throw new WellFormednessException(myMessage, h);
+        }
+        catch (NoMatchException nme) {
+            // Fall through.
         }
         finally {
             // If we just matched, we want to get back to the state just before
@@ -33,7 +37,6 @@ public class MForbid implements Matcher {
             h.tossState();
         }
         
-        // No exception above.  We matched.  This is forbidden.
-        throw new WellFormednessException(myMessage, h);
+        return 0;
     }
 }
