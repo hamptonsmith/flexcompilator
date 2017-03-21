@@ -7,9 +7,13 @@ public class WellFormednessException extends Exception {
     private final String myAlignmentPrefix;
     
     public WellFormednessException(String msg, ParseHead state) {
+        this(msg, state.getPosition());
+    }
+    
+    public WellFormednessException(String msg, ParseHead.Position state) {
         super(msg);
         
-        myLineContents = state.getLine();
+        myLineContents = state.getLineContents();
         myLineNumber = state.getLineNumber();
         myColNumber = state.getColumn();
         myAlignmentPrefix = state.getAlignmentPrefix();
