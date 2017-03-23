@@ -24,6 +24,7 @@ public class MForbid implements Matcher {
         
         try {
             h.require(myMatcher);
+            h.tossState();
             throw new WellFormednessException(myMessage, h);
         }
         catch (NoMatchException nme) {
