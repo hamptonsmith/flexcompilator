@@ -1,8 +1,5 @@
-package flexcompilator;
+package com.shieldsbetter.flexcompilator;
 
-import com.shieldsbetter.flexcompilator.NoMatchException;
-import com.shieldsbetter.flexcompilator.ParseHead;
-import com.shieldsbetter.flexcompilator.WellFormednessException;
 import com.shieldsbetter.flexcompilator.matchers.MCapture;
 import com.shieldsbetter.flexcompilator.matchers.MLiteral;
 import junit.framework.Assert;
