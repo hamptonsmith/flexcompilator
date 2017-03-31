@@ -36,10 +36,6 @@ public class ParseHead {
     }
     
     public void pushOnParseStack(Object o) {
-        if (o.equals("from")) {
-            throw new RuntimeException();
-        }
-        
         myStates.peek().pushOnParseStack(o);
     }
     
